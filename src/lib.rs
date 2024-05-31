@@ -8,7 +8,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from(mut args: impl Iterator<Item=String>) -> Result<Config, &'static str> {
+    pub fn from(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
         // Skip the first argument, which is the program name.
         args.next();
 
@@ -24,9 +24,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = std::fs::read_to_string(config.filepath)?;
 
     let search = if config.is_case_sensitive {
-        search
+        search_sensitive
     } else {
-        search_case_insensitive
+        search_insensitive
     };
 
     for line in search(&config.query, &contents) {
@@ -36,14 +36,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_sensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     contents
         .lines()
         .filter(|line| line.contains(query))
         .collect()
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
     contents
         .lines()
@@ -82,7 +82,10 @@ Rust:
 safe, fast, productive.
 Pick three.";
 
-        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+        assert_eq!(
+            vec!["safe, fast, productive."],
+            search_sensitive(query, contents)
+        );
     }
 
     #[test]
@@ -94,7 +97,7 @@ The b
 the c
 the d";
 
-        assert_eq!(vec!["the c", "the d"], search(query, contents));
+        assert_eq!(vec!["the c", "the d"], search_sensitive(query, contents));
     }
 
     #[test]
@@ -102,7 +105,7 @@ the d";
         let query = "fox";
         let contents = "The end.";
 
-        assert_eq!(Vec::<&str>::new(), search(query, contents));
+        assert_eq!(Vec::<&str>::new(), search_sensitive(query, contents));
     }
 
     #[test]
@@ -110,7 +113,7 @@ the d";
         let query = "the";
         let contents = "The a\nThe b\nthe c\nthe d";
 
-        assert_eq!(vec!["the c", "the d"], search(query, contents));
+        assert_eq!(vec!["the c", "the d"], search_sensitive(query, contents));
     }
 
     #[test]
@@ -118,6 +121,9 @@ the d";
         let query = "the";
         let contents = "The a\nThe b\nthe c\nthe d";
 
-        assert_eq!(vec!["The a", "The b", "the c", "the d"], search_case_insensitive(query, contents));
+        assert_eq!(
+            vec!["The a", "The b", "the c", "the d"],
+            search_insensitive(query, contents)
+        );
     }
 }

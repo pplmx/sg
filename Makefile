@@ -7,7 +7,7 @@ run:
 
 # Format
 fmt:
-	@cargo fmt --all --check
+	@cargo fmt
 
 # Test
 test:
