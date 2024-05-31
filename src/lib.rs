@@ -8,18 +8,15 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("Not enough arguments");
-        }
-        let query = args[1].clone();
-        let filepath = args[2].clone();
+    pub fn from(mut args: impl Iterator<Item=String>) -> Result<Config, &'static str> {
+        // Skip the first argument, which is the program name.
+        args.next();
 
-        // is_err() returns true if the environment variable is not set,
-        // which means the search should be case-sensitive.
-        let is_case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-
-        Ok(Config { query, filepath, is_case_sensitive })
+        Ok(Config {
+            query: args.next().ok_or("Missing query string")?,
+            filepath: args.next().ok_or("Missing file path")?,
+            is_case_sensitive: env::var("CASE_INSENSITIVE").is_err(),
+        })
     }
 }
 
@@ -65,7 +62,7 @@ mod tests {
             String::from("query"),
             String::from("filepath"),
         ];
-        let config = Config::from(&args).unwrap();
+        let config = Config::from(args.into_iter()).unwrap();
         assert_eq!(config.query, "query");
         assert_eq!(config.filepath, "filepath");
     }
@@ -73,7 +70,7 @@ mod tests {
     #[test]
     fn config_from_invalid_args() {
         let args = vec![String::from("sg")];
-        let config = Config::from(&args);
+        let config = Config::from(args.into_iter());
         assert!(config.is_err());
     }
 
