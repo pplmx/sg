@@ -6,7 +6,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
+    pub fn from(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
             return Err("Not enough arguments");
         }
