@@ -21,3 +21,27 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     println!("With text:\n{}", contents);
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn config_from_valid_args() {
+        let args = vec![
+            String::from("sg"),
+            String::from("query"),
+            String::from("filepath"),
+        ];
+        let config = Config::from(&args).unwrap();
+        assert_eq!(config.query, "query");
+        assert_eq!(config.filepath, "filepath");
+    }
+
+    #[test]
+    fn config_from_invalid_args() {
+        let args = vec![String::from("sg")];
+        let config = Config::from(&args);
+        assert!(config.is_err());
+    }
+}

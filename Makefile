@@ -9,6 +9,10 @@ run:
 fmt:
 	@cargo fmt --all --check
 
+# Test
+test:
+	@cargo test
+
 # Show help
 help:
 	@echo ""
