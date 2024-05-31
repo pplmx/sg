@@ -5,6 +5,10 @@
 run:
 	@cargo run -- searchstring poem.txt
 
+# Format
+fmt:
+	@cargo fmt --all --check
+
 # Show help
 help:
 	@echo ""
