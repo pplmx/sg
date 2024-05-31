@@ -13,6 +13,10 @@ fmt:
 test:
 	@cargo test
 
+# Clippy
+clippy:
+	@cargo clippy --all-targets --all-features -- -D warnings
+
 # Show help
 help:
 	@echo ""

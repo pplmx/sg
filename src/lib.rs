@@ -17,7 +17,7 @@ impl Config {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = std::fs::read_to_string(&config.filepath)?;
+    let contents = std::fs::read_to_string(config.filepath)?;
     println!("With text:\n{}", contents);
     Ok(())
 }
